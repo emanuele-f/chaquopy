@@ -488,6 +488,9 @@ class BuildWheel:
             raise CommandError(e)
 
     def get_common_env_vars(self, env):
+        for key, value in os.environ.items():
+            env[key] = value
+
         build_common_output = run(
             f"abi={self.abi}; api_level={self.api_level}; prefix={self.host_env}/chaquopy; "
             f". {PYPI_DIR}/../../target/build-common.sh; export",
