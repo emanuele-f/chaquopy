@@ -28,7 +28,7 @@
 +os.environ["PYO3_CROSS_LIB_DIR"] = f"{os.environ['RECIPE_DIR']}/../../../../build/{os.environ['CHAQUOPY_ABI']}/sysroot/usr/lib"
 +
 +# for openssl-sys
-+os.environ["OPENSSL_DIR"] = f"{os.environ['RECIPE_DIR']}/build/{os.environ['PKG_VERSION']}/cp310-cp310-android_21_{os.environ['CHAQUOPY_ABI']}/requirements/chaquopy"
++os.environ["OPENSSL_DIR"] = f"{os.environ['RECIPE_DIR']}/build/{os.environ['PKG_VERSION']}/cp310-cp310-android_21_{os.environ['CHAQUOPY_ABI'].replace('-', '_')}/requirements/chaquopy"
 +print(os.environ)
 +
 +try:

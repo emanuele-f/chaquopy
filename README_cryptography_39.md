@@ -106,8 +106,6 @@ ARCH="x86"         CPU="x86"     TOOL_PREFIX="i686-linux-android"    CLANG_TRIPL
 ARCH="armeabi-v7a" CPU="arm"     TOOL_PREFIX="arm-linux-androideabi" CLANG_TRIPLET="armv7a-linux-androideabi"
 ARCH="arm64-v8a"   CPU="aarch64" TOOL_PREFIX="aarch64-linux-android" CLANG_TRIPLET=""
 ARCH="x86_64"      CPU="x86_64"  TOOL_PREFIX="x86_64-linux-android"  CLANG_TRIPLET=""
-
-cd ~/src/chaquopy/build
 ```
 
 ## Python cross-compilation
@@ -115,6 +113,7 @@ cd ~/src/chaquopy/build
 This step is required only once per ABI. You can skip this for subsequent wheels build.
 
 ```
+cd ~/src/chaquopy/build
 rm -rf $ARCH/sysroot/usr $ARCH/Python-$version
 mkdir -p $ARCH/sysroot/usr/lib $ARCH/sysroot/usr/include
 SYSROOT=`readlink -f $ARCH/sysroot`
