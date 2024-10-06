@@ -1,6 +1,6 @@
 package:
   name: cryptography
-  version: 39.0.2
+  version: 42.0.8
 
 requirements:
   build:

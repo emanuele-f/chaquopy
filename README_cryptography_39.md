@@ -29,6 +29,7 @@ mkdir build
 
 # install python env and requirements
 source /opt/miniconda3/etc/profile.d/conda.sh
+export CRYPTOGRAPHY_OPENSSL_NO_LEGACY=1
 conda create -n build-wheel python=3.10
 conda activate build-wheel
 pip install -r server/pypi/requirements.txt
@@ -36,28 +37,32 @@ pip install -r server/pypi/requirements.txt
 # pip 19.3 from /opt/miniconda3/envs/build-wheel/lib/python3.10/site-packages/pip (python 3.10)
 pip --version
 
-# Python 3.10.9
+# Python 3.10.15
 python --version
 
 # download target Python version
-cd ~/chaquopy
+cd ~/src/chaquopy
 mkdir -p maven/com/chaquo/python/target/3.10.6-1-1
 cd maven/com/chaquo/python/target/3.10.6-1-1
 wget https://repo.maven.apache.org/maven2/com/chaquo/python/target/3.10.6-1/target-3.10.6-1-x86_64.zip
 wget https://repo.maven.apache.org/maven2/com/chaquo/python/target/3.10.6-1/target-3.10.6-1-arm64-v8a.zip
 wget https://repo.maven.apache.org/maven2/com/chaquo/python/target/3.10.6-1/target-3.10.6-1-armeabi-v7a.zip
 wget https://repo.maven.apache.org/maven2/com/chaquo/python/target/3.10.6-1/target-3.10.6-1-x86.zip
+
+cd ~/src/chaquopy/build
+wget https://www.python.org/ftp/python/3.10.6/Python-3.10.6.tgz
 ```
 
 Set up the Android command line tools as explained at server/pypi/README.md (required to download the ndk versions later)
 
 - Currently: https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
 
-Install Rust `1.60.0`. NOTE: latest rust version fails with `ld: error: unable to find library -lunwind` during the build.
+Install Rust `1.63.0`. NOTE: latest rust toolchain fails with `ld: error: unable to find library -lunwind` during the build.
 
 ```
 pacman -Rs rustup rust
-curl https://sh.rustup.rs -sSf | sh -s -- -y -t 1.60.0
+rustup self uninstall 2>/dev/null
+curl https://sh.rustup.rs -sSf | sh -s -- -y -t 1.63.0
 source "$HOME/.cargo/env"
 
 # required for cross-compilation
@@ -68,6 +73,9 @@ rustup target add x86_64-linux-android
 
 # Verify installed cross-compilation libraries
 rustc --print target-list | grep android
+
+# 1.60.0-x86_64-unknown-linux-gnu
+rustup toolchain list
 ```
 
 ## Env setup
@@ -100,7 +108,6 @@ ARCH="arm64-v8a"   CPU="aarch64" TOOL_PREFIX="aarch64-linux-android" CLANG_TRIPL
 ARCH="x86_64"      CPU="x86_64"  TOOL_PREFIX="x86_64-linux-android"  CLANG_TRIPLET=""
 
 cd ~/src/chaquopy/build
-SYSROOT=`readlink -f $ARCH/sysroot`
 ```
 
 ## Python cross-compilation
@@ -110,6 +117,7 @@ This step is required only once per ABI. You can skip this for subsequent wheels
 ```
 rm -rf $ARCH/sysroot/usr $ARCH/Python-$version
 mkdir -p $ARCH/sysroot/usr/lib $ARCH/sysroot/usr/include
+SYSROOT=`readlink -f $ARCH/sysroot`
 tar -C $ARCH -xf Python-$version.tgz
 
 cp $TOOLCHAIN/sysroot/usr/lib/${TOOL_PREFIX}/*.a $SYSROOT/usr/lib
@@ -128,7 +136,7 @@ export NM="$TOOLCHAIN/bin/llvm-nm"
 export READELF="$TOOLCHAIN/bin/llvm-readelf"
 export CFLAGS="-fPIC -DANDROID --sysroot=$SYSROOT"
 export CXXFLAGS="$CFLAGS"
-export LD_FLAGS="--sysroot=$SYSROOT -Wl,--exclude-libs,libgcc.a -Wl,--exclude-libs,libgcc_real.a -Wl,--exclude-libs,libunwind.a -Wl,--build-id=sha1 -Wl,--no-rosegment -lm -Wl,--no-undefined"
+export LDFLAGS="--sysroot=$SYSROOT -Wl,--exclude-libs,libgcc.a -Wl,--exclude-libs,libgcc_real.a -Wl,--exclude-libs,libunwind.a -Wl,--build-id=sha1 -Wl,--no-rosegment -lm -Wl,--no-undefined"
 
 cd $ARCH/Python-$version
 ./configure --build=x86_64-unknown-linux-gnu --host=$CPU-linux-android --enable-shared --prefix=`readlink -f ../sysroot/usr` \
