@@ -170,6 +170,13 @@ cd ~/src/chaquopy/server/pypi
 ./build-wheel.py --python 3.10 --abi $ARCH mitmproxy_rs
 ```
 
+## Build aioquic
+
+```
+cd ~/src/chaquopy/server/pypi
+./build-wheel.py --python 3.10 --abi $ARCH aioquic
+```
+
 ## Known issues
 
 - On arm7, importing the wheel at runtime throws `ImportError: dlopen failed: cannot locate symbol "decode_eht_entry"`
