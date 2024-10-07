@@ -634,12 +634,12 @@ class BuildWheel:
 
         if self.needs_rust_support():
             os.environ["RUSTFLAGS"] = f"-C linker={os.environ['CC']}"
-            os.environ["CARGO_BUILD_TARGET"] = os.environ['HOST']
+            os.environ["CARGO_BUILD_TARGET"] = ABIS[self.abi].tool_prefix
 
             # https://pyo3.rs/v0.15.2/building_and_distribution.html
-            os.environ["PYO3_PYTHON"] = f"python{os.environ['CHAQUOPY_PYTHON']}"
-            os.environ["PYO3_CROSS_PYTHON_VERSION"] = os.environ['CHAQUOPY_PYTHON']
-            os.environ["PYO3_CROSS_LIB_DIR"] = f"{os.environ['RECIPE_DIR']}/../../../../build/{os.environ['CHAQUOPY_ABI']}/sysroot/usr/lib"
+            os.environ["PYO3_PYTHON"] = f"python{self.python}"
+            os.environ["PYO3_CROSS_PYTHON_VERSION"] = self.python
+            os.environ["PYO3_CROSS_LIB_DIR"] = f"{self.package_dir}/../../../../build/{self.abi}/sysroot/usr/lib"
 
     def needs_rust_support(self):
         return "mitmproxy-rs" in self.src_dir

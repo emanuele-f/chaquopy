@@ -91,7 +91,7 @@ version=3.10.6
 
 # must match info specified in target/build-common.sh
 api_level=21
-ndk_version=22.1.7171670
+ndk_version=26.1.10909125
 
 TOOLCHAIN="$ANDROID_HOME/ndk/$ndk_version/toolchains/llvm/prebuilt/linux-x86_64"
 ```
@@ -126,7 +126,7 @@ cp -r $TOOLCHAIN/sysroot/usr/include/* $SYSROOT/usr/include
 export CC=$TOOLCHAIN/bin/${CLANG_TRIPLET:-$TOOL_PREFIX}${api_level}-clang
 export CXX=${CC}++
 export AR=$TOOLCHAIN/bin/llvm-ar
-export AS=$TOOLCHAIN/bin/$TOOL_PREFIX-as
+export AS=$TOOLCHAIN/bin/llvm-as
 export LD=$TOOLCHAIN/bin/ld
 export LDSHARED="$CC -shared"
 export RANLIB="$TOOLCHAIN/bin/llvm-ranlib"
@@ -161,9 +161,6 @@ cd ~/src/chaquopy/server/pypi
 ## Build mitmproxy_rs
 
 ```
-# NOTE requires this fix in build-wheel.py
-# if exists(f"{self.src_dir}/pyproject.toml") and (not "mitmproxy-rs" in self.src_dir):
-
 # at least rust 1.80 required
 rustup install stable
 
