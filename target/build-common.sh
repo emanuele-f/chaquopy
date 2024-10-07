@@ -57,7 +57,7 @@ esac
 # $ndk/build/cmake/android.toolchain.cmake.
 toolchain=$(echo $ndk/toolchains/llvm/prebuilt/*)
 export AR="$toolchain/bin/llvm-ar"
-export AS="$toolchain/bin/$host_triplet-as"
+export AS="$toolchain/bin/llvm-as"
 export CC="$toolchain/bin/${clang_triplet:-$host_triplet}$api_level-clang"
 export CXX="${CC}++"
 export LD="$toolchain/bin/ld"
