@@ -1,0 +1,11 @@
+--- src-original/Cargo.toml
++++ src/Cargo.toml
+@@ -49,7 +49,7 @@
+ [patch.crates-io]
+ # tokio = { path = "../tokio/tokio" }
+ smoltcp = { git = 'https://github.com/smoltcp-rs/smoltcp', rev = 'ef67e7b46cabf49783053cbf68d8671ed97ff8d4' }
+-boringtun = { git = 'https://github.com/cloudflare/boringtun', rev = 'e3252d9c4f4c8fc628995330f45369effd4660a1' }
++boringtun = { git = 'https://github.com/emanuele-f/boringtun', rev = 'eb0061f1a35c048da52913b09ffed583125a42f0' }
+ 
+ [target.'cfg(windows)'.dependencies.windows]
+ version = "0.57.0"

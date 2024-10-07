@@ -1,0 +1,9 @@
+package:
+  name: mitmproxy_rs
+  version: 0.9.2
+
+requirements:
+  build:
+    - cffi 1.15.1
+    - setuptools-rust 1.2.0
+    - maturin 1.7.4
