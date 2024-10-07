@@ -158,6 +158,20 @@ cd ~/src/chaquopy/server/pypi
 ./build-wheel.py --python 3.10 --abi $ARCH cryptography
 ```
 
+## Build mitmproxy_rs
+
+```
+# NOTE requires this fix in build-wheel.py
+# if exists(f"{self.src_dir}/pyproject.toml") and (not "mitmproxy-rs" in self.src_dir):
+
+# at least rust 1.80 required
+rustup install stable
+
+rustup default stable-x86_64-unknown-linux-gnu
+
+cd ~/src/chaquopy/server/pypi
+./build-wheel.py --python 3.10 --abi $ARCH mitmproxy_rs
+```
 
 ## Known issues
 
