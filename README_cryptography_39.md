@@ -177,6 +177,13 @@ cd ~/src/chaquopy/server/pypi
 ./build-wheel.py --python 3.10 --abi $ARCH aioquic
 ```
 
+## Build pylsqpack
+
+```
+cd ~/src/chaquopy/server/pypi
+./build-wheel.py --python 3.10 --abi $ARCH pylsqpack
+```
+
 ## Known issues
 
 - On arm7, importing the wheel at runtime throws `ImportError: dlopen failed: cannot locate symbol "decode_eht_entry"`
