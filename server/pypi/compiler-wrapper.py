@@ -12,7 +12,7 @@ import sys
 valid_dirs = [abspath(f"{dirname(sys.argv[0])}/../..")]
 
 def is_valid(dir, prefix):
-    if True or any(commonpath([vd, abspath(dir)]) == vd for vd in valid_dirs):
+    if any(commonpath([vd, abspath(dir)]) == vd for vd in valid_dirs):
         return True
     else:
         print(f"Chaquopy: ignored invalid {prefix} directory: {dir!r}", file=sys.stderr)
