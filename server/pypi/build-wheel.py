@@ -611,18 +611,19 @@ class BuildWheel:
             "SRC_DIR": self.src_dir,
 
             # allows packages to locate openssl, openssl must be in the meta.yml requirements.host
-            "OPENSSL_DIR": f"{self.version_dir}/{self.compat_tag}/requirements/chaquopy"
+            "OPENSSL_DIR": f"{self.host_env}/chaquopy",
         })
 
         if self.needs_rust:
             # rust-specific env variables
             env.update({
                 # https://doc.rust-lang.org/rustc/codegen-options/index.html
-                "RUSTFLAGS": f"-C linker={env['CC']}",
+                "RUSTFLAGS": f"-C linker={env['CC']} -L native={self.host_env}/chaquopy/lib",
                 "CARGO_BUILD_TARGET": ABIS[self.abi].tool_prefix,
 
-                # https://pyo3.rs/v0.15.2/building_and_distribution.html
-                "PYO3_PYTHON": f"python{self.python}",
+                # https://pyo3.rs/main/building-and-distribution#building-abi3-extensions-without-a-python-interpreter
+                # This requires the "-L native" flag in RUSTFLAGS
+                "PYO3_NO_PYTHON": "1",
                 "PYO3_CROSS": "1",
                 "PYO3_CROSS_PYTHON_VERSION": self.python,
             })
