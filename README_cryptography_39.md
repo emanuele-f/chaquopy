@@ -186,5 +186,4 @@ cd ~/src/chaquopy/server/pypi
 
 ## Known issues
 
-- On arm7, importing the wheel at runtime throws `ImportError: dlopen failed: cannot locate symbol "decode_eht_entry"`
 - Cryptography "legacy" ciphers are disabled (as if `CRYPTOGRAPHY_OPENSSL_NO_LEGACY` were defined)

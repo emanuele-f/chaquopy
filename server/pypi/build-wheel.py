@@ -103,6 +103,8 @@ class BuildWheel:
                         # worth keeping them in existing meta.yaml files in case that changes.
                         pass
 
+            self.needs_rust = next((True for x in self.meta["requirements"]["build"] if x.startswith("setuptools-rust ")), False)
+
             self.unpack_and_build()
 
         except CommandError as e:
@@ -574,7 +576,7 @@ class BuildWheel:
 
         # Overrides sysconfig.get_platform and distutils.util.get_platform.
         # TODO: consider replacing this with crossenv.
-        env["_PYTHON_HOST_PLATFORM"] = f"linux_{ABIS[self.abi].uname_machine}"
+        env["_PYTHON_HOST_PLATFORM"] = f"linux-{ABIS[self.abi].uname_machine}"
 
     @contextmanager
     def env_vars(self):
@@ -607,7 +609,23 @@ class BuildWheel:
             "PKG_VERSION": self.version,
             "RECIPE_DIR": self.package_dir,
             "SRC_DIR": self.src_dir,
+
+            # allows packages to locate openssl, openssl must be in the meta.yml requirements.host
+            "OPENSSL_DIR": f"{self.version_dir}/{self.compat_tag}/requirements/chaquopy"
         })
+
+        if self.needs_rust:
+            # rust-specific env variables
+            env.update({
+                # https://doc.rust-lang.org/rustc/codegen-options/index.html
+                "RUSTFLAGS": f"-C linker={env['CC']}",
+                "CARGO_BUILD_TARGET": ABIS[self.abi].tool_prefix,
+
+                # https://pyo3.rs/v0.15.2/building_and_distribution.html
+                "PYO3_PYTHON": f"python{self.python}",
+                "PYO3_CROSS": "1",
+                "PYO3_CROSS_PYTHON_VERSION": self.python,
+            })
 
         for var in self.meta["build"]["script_env"]:
             key, value = var.split("=")
@@ -631,18 +649,6 @@ class BuildWheel:
                     del os.environ[key]
                 else:
                     os.environ[key] = value
-
-        if self.needs_rust_support():
-            os.environ["RUSTFLAGS"] = f"-C linker={os.environ['CC']}"
-            os.environ["CARGO_BUILD_TARGET"] = ABIS[self.abi].tool_prefix
-
-            # https://pyo3.rs/v0.15.2/building_and_distribution.html
-            os.environ["PYO3_PYTHON"] = f"python{self.python}"
-            os.environ["PYO3_CROSS_PYTHON_VERSION"] = self.python
-            os.environ["PYO3_CROSS_LIB_DIR"] = f"{self.package_dir}/../../../../build/{self.abi}/sysroot/usr/lib"
-
-    def needs_rust_support(self):
-        return "mitmproxy-rs" in self.src_dir
 
     def generate_cmake_toolchain(self, env):
         ndk = abspath(f"{env['AR']}/../../../../../..")
