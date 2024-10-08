@@ -72,7 +72,7 @@ rustup target add i686-linux-android
 rustup target add x86_64-linux-android
 
 # Verify installed cross-compilation libraries
-rustc --print target-list | grep android
+rustup target list | grep "android.* (installed)"
 
 # 1.60.0-x86_64-unknown-linux-gnu
 rustup toolchain list
