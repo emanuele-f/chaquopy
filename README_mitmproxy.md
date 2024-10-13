@@ -44,7 +44,7 @@ git checkout server/pypi/dist/.gitignore
 
 PYTHON_VER=3.10
 ABIS=(x86 armeabi-v7a arm64-v8a x86_64)
-PACKAGES=(cryptography mitmproxy_rs aioquic pylsqpack)
+PACKAGES=(cryptography mitmproxy_rs aioquic pylsqpack msgpack)
 
 for PKG in $PACKAGES; do
   do_break=0
