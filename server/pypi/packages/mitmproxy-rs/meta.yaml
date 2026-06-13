@@ -1,0 +1,14 @@
+package:
+  name: mitmproxy_rs
+  version: "0.12.9"
+
+build:
+  # maturin stamps wheel files with the ZIP epoch (1980-01-01) in local time,
+  # which is before 1980 in UTC and makes the final `wheel pack` step fail.
+  # Pin a fixed, valid timestamp so the packaged files are after 1980 in UTC.
+  script_env:
+    - SOURCE_DATE_EPOCH=1577836800
+
+requirements:
+  build:
+    - rust
