@@ -1,0 +1,29 @@
+Keep the docs, tests and changelogs out of the wheel: without this they're
+installed into the app as top-level directories. Fixed upstream in a later
+version by the same change.
+
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -101,10 +101,10 @@
+ locked = true
+ sdist-generator = "git"
+ include = [
+-    "CHANGELOG.rst",
+-    "CONTRIBUTING.rst",
++    { path = "CHANGELOG.rst", format = "sdist" },
++    { path = "CONTRIBUTING.rst", format = "sdist" },
+ 
+-    "docs/**/*",
++    { path = "docs/**/*", format = "sdist" },
+ 
+     { path = "src/_cffi_src/**/*.py", format = "sdist" },
+     { path = "src/_cffi_src/**/*.c", format = "sdist" },
+@@ -116,7 +116,7 @@
+     { path = "src/rust/**/Cargo.lock", format = "sdist" },
+     { path = "src/rust/**/*.rs", format = "sdist" },
+ 
+-    "tests/**/*.py",
++    { path = "tests/**/*.py", format = "sdist" },
+ ]
+ exclude = [
+     "vectors/**/*",

@@ -774,6 +774,16 @@ class BuildWheel:
         run(f"unzip -d {tmp_dir} -q {in_filename}")
         info_dir = assert_isdir(f"{tmp_dir}/{self.name_version}.dist-info")
 
+        # maturin dates its zip entries 1980-01-01, which unzip restores as a local
+        # time. East of UTC that's before the earliest date `wheel pack` can write, so
+        # bring those files forward to the epoch it uses.
+        zip_epoch = 315532800  # 1980-01-01 00:00:00 UTC
+        for dirpath, _, filenames in os.walk(tmp_dir):
+            for name in filenames:
+                path = join(dirpath, name)
+                if not islink(path) and os.stat(path).st_mtime < zip_epoch:
+                    os.utime(path, (zip_epoch, zip_epoch))
+
         # This can't be done before the build, because sentencepiece generates a license file
         # in the source directory during the build.
         license_files = (find_license_files(self.src_dir) +
