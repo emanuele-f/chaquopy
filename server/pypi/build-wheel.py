@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from email import generator, message, parser
 from glob import glob
 import os
-from os.path import abspath, basename, dirname, exists, isdir, islink, join, splitext
+from os.path import abspath, basename, dirname, exists, isdir, islink, join, lexists, splitext
 from pathlib import Path
 import re
 import shlex
@@ -656,6 +656,14 @@ class BuildWheel:
     def get_rust_env_vars(self, env):
         tool_prefix = ABIS[self.abi].tool_prefix
         run(f"rustup target add {tool_prefix}")
+
+        # Since PyO3 0.29, maturin links abi3 modules against libpython3.so, which
+        # Chaquopy doesn't provide. The linker records the target's SONAME, so the
+        # module still depends on libpython3.X.so.
+        lib_dir = f"{self.host_env}/chaquopy/lib"
+        if not lexists(f"{lib_dir}/libpython3.so"):
+            os.symlink(f"libpython{self.python}.so", f"{lib_dir}/libpython3.so")
+
         env.update({
             "RUSTFLAGS": f"-C linker={env['CC']} -L native={self.host_env}/chaquopy/lib"
                          f" -C link-arg=-Wl,-z,max-page-size=16384",

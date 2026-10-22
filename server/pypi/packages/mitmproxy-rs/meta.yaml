@@ -1,6 +1,6 @@
 package:
   name: mitmproxy_rs
-  version: "0.12.9"
+  version: "0.12.15"
 
 build:
   # maturin stamps wheel files with the ZIP epoch (1980-01-01) in local time,
