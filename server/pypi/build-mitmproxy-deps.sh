@@ -6,7 +6,7 @@ cd "$(dirname "$0")"
 PYTHON=3.13
 ABIS=(arm64-v8a x86_64)
 RUST_TARGETS=(aarch64-linux-android x86_64-linux-android)
-PACKAGES=(aioquic pylsqpack msgpack mitmproxy_rs bcrypt zstandard)
+PACKAGES=(aioquic pylsqpack msgpack mitmproxy_rs bcrypt zstandard brotli)
 
 if ! command -v rustup >/dev/null; then
     echo "rustup is not installed or not on PATH" >&2
